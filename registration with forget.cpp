@@ -6,7 +6,8 @@
 
 using namespace std;
 
-class User {
+class User 
+{
 private:
     string username;
     string email;
@@ -17,7 +18,8 @@ private:
 
 public:
 
-    void login() {
+    void login() 
+	{
         int count = 0;
         string inputUsername, inputPassword;
         system("cls");
@@ -28,8 +30,10 @@ public:
         cin >> inputPassword;
 
         ifstream input("user records.txt");
-        while (input >> username >> email >> address >> contactNumber >> password >> cpassword) {
-            if ((username == inputUsername || email == inputUsername) && password == inputPassword) {
+        while (input >> username >> email >> address >> contactNumber >> password >> cpassword) 
+		{
+            if ((username == inputUsername || email == inputUsername) && password == inputPassword) 
+			{
                 count = 1;
                 system("cls");
                 break;
@@ -37,17 +41,20 @@ public:
         }
         input.close();
 
-        if (count == 1) {
+        if (count == 1) 
+		{
             cout << "\nHello " << username << "\n<LOGIN SUCCESSFUL>\nThanks for logging in Restaurant Fusion Fare Delights\n";
             cin.get();
             return;
-        } else {
+        } else 
+		{
             cout << "\nLOGIN ERROR\nPlease check again your username or email and password\n";
             int main();
         }
     }
 
-    void registration() {
+    void registration() 
+	{
         system("cls");
         cout << "User Register" << endl;
         cout << "\nName : ";
@@ -71,15 +78,18 @@ public:
         int main();
     }
 
-    void forgetPassword() {
+    void forgetPassword() 
+	{
         string input;
         cout << "Enter your username or email to recover password: ";
         cin >> input;
 
         ifstream userFile("user records.txt");
 
-        while (userFile >> username >> email >> address >> contactNumber >> password >> cpassword) {
-            if (username == input || email == input) {
+        while (userFile >> username >> email >> address >> contactNumber >> password >> cpassword) 
+		{
+            if (username == input || email == input) 
+			{
                 cout << "Your password is : " << password << endl;
                 return;
             }
@@ -93,15 +103,17 @@ public:
 };
 
 
-class AdminLogin {
+class Admin 
+{
 private:
     string adminId;
     string adminPass;
 
 public:
-    AdminLogin() : adminId("admin"), adminPass("admin123") {}
+    Admin() : adminId("admin"), adminPass("admin123") {}
 
-    void adminlogin() {
+    void adminlogin() 
+	{
         int count = 0;
         string inputId, inputPass;
 
@@ -112,26 +124,31 @@ public:
         cout << "Password: ";
         cin >> inputPass;
 
-        if (inputId == adminId && inputPass == adminPass) {
+        if (inputId == adminId && inputPass == adminPass) 
+		{
             count = 1;
             system("cls");
         }
 
-        if (count == 1) {
+        if (count == 1) 
+		{
             cout << "\n<ADMIN LOGIN SUCCESSFUL>\n";
-            cout << "Welcome, Admin " << adminId << endl;
+            cout << "Welcome, Admin " << endl;
             return;
-        } else {
+        } 
+		else 
+		{
             cout << "\nADMIN LOGIN ERROR\nPlease check your Admin ID and Password\n";
             return;
         }
     }
 };
 
-int main() {
+int main() 
+{
     int choice;
     User user;
-    AdminLogin admin;
+    Admin admin;
 
     do {
         cout << "************************************************\n";
@@ -146,7 +163,8 @@ int main() {
         cin >> choice;
         cout << endl;
 
-        switch (choice) {
+        switch (choice) 
+		{
             case 1:
                 user.login();
                 break;
