@@ -1,0 +1,15 @@
+Food/Beverage
+1) Nasi Lemak with Fried Chicken  RM8.50
+2) Curry Mee  RM7.00
+3) Fried Rice  RM7.00
+4) Mee Soup  RM6.00
+5) Asam Laksa  RM8.00
+6) Prawn Mee  RM6.50
+7) Teh (hot)  RM2.00
+8) Teh (cold)  RM2.50
+9) Coffee (hot)  RM2.30
+10) Coffee (cold)  RM2.80
+11) Milo (hot)  RM3.00
+12) Milo (cold)  RM3.50
+13) Lemon Tea (hot)  RM3.00
+14) Lemon Tea (cold)  RM3.50
