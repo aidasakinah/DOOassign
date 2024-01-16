@@ -8,7 +8,7 @@ using namespace std;
 
 void login();
 void registration();
-void recoverPassword();
+void forgetPassword();
 
 class AdminLogin 
 {
@@ -53,7 +53,7 @@ int main()
     cout << "**************      MENU      ******************\n\n";
     cout << "1. LOGIN" << endl;
         cout << "2. REGISTER" << endl;
-        cout << "3. RECOVER PASSWORD" << endl;
+        cout << "3. FORGET PASSWORD" << endl;
         cout << "4. ADMINISTRATOR LOGIN" << endl;
         cout << "5. Exit" << endl;
     cout << "\nEnter your choice :";
@@ -69,7 +69,7 @@ int main()
                 registration();
                 break;
             case 3:
-                recoverPassword();
+                forgetPassword();
                 break;
             case 4:
                 {
@@ -151,7 +151,7 @@ void registration()
     main();
 }
 
-void recoverPassword() 
+void forgetPassword() 
 {
     string username;
     cout << "Enter your username or email to recover password: ";
