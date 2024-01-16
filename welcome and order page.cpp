@@ -8,8 +8,20 @@ class Restaurant
 	private:
 	float Nasilemak, Currymee, Friedrice, Meesoup, Asamlaksa, Prawnmee, Teh_hot, Teh_cold, Coffee_hot, Coffee_cold, Milo_hot, Milo_cold, Lemontea_hot, Lemontea_cold;
 	float price;
+	ifstream menuFile;
 	
 	public:
+	void readFile()
+	{
+		ifstream menuFile("Menu.txt");
+        if (!menuFile)
+        {
+        	cout<<"File does not exist";
+			exit(1);
+		}
+
+    	menuFile.close();
+	}
 	void displayMenu(int nasi, int curry, int fried, int mee, int asam, int prawn, int teh_h, int teh_c, int coffee_h, int coffee_c, int milo_h, int milo_c, int lemon_h, int lemon_c)
 	{
 		Nasilemak = static_cast<float>(nasi);
@@ -32,24 +44,6 @@ class Restaurant
 	
 	void getOrder()
 	{
-		cout<<"---------------------------------------------------"<<endl;
-		cout<<"\tRestaurant Fusion Fare Delight"<<endl;
-		cout<<"---------------------------------------------------"<<endl;
-		cout<<"Nasi Lemak with Fried Chicken :"<<Nasilemak<<" bowl(s)"<<endl;
-		cout<<"Curry Mee :"<<Currymee<<" bowl(s)"<<endl;
-		cout<<"Fried Rice :"<<Friedrice<<" bowl(s)"<<endl;
-		cout<<"Mee Soup :"<<Meesoup<<" bowl(s)"<<endl;
-		cout<<"Asam Laksa :"<<Asamlaksa<<" bowl(s)"<<endl;
-		cout<<"Prawn Mee :"<<Prawnmee<<" bowl(s)"<<endl;
-		cout<<"Teh (hot) :"<<Teh_hot<<" cup(s)"<<endl;
-		cout<<"Teh (cold) :"<<Teh_cold<<" cup(s)"<<endl;
-		cout<<"Coffee (hot) :"<<Coffee_hot<<" cup(s)"<<endl;
-		cout<<"Coffee (cold) :"<<Coffee_cold<<" cup(s)"<<endl;
-		cout<<"Milo (hot) :"<<Milo_hot<<" cup(s)"<<endl;
-		cout<<"Milo (cold) :"<<Milo_cold<<" cup(s)"<<endl;
-		cout<<"Lemon Tea (hot) :"<<Lemontea_hot<<" cup(s)"<<endl;
-		cout<<"Lemon Tea (cold) :"<<Lemontea_cold<<" cup(s)"<<endl;
-		
 		cout<<"Total bowls :"<< Nasilemak + Currymee + Friedrice + Meesoup + Asamlaksa + Prawnmee<<endl;
 		cout<<"Total cups :"<< Teh_hot + Teh_cold + Coffee_hot + Coffee_cold + Milo_hot + Milo_cold + Lemontea_hot + Lemontea_cold<<endl;
 	}
@@ -59,6 +53,7 @@ class Restaurant
 		price = Nasilemak * 8.50 + Currymee * 7.00 + Friedrice * 7.00 + Meesoup * 6.00 + Asamlaksa * 8.00 + Prawnmee * 6.50 + Teh_hot * 2.00 + Teh_cold * 2.50 + Coffee_hot * 2.30 + Coffee_cold * 2.80 + Milo_hot * 3.00 + Milo_cold * 3.50 + Lemontea_hot * 3.00 + Lemontea_cold * 3.50;
 		cout<<"Thank you. Your order price is RM"<<price<<endl;
 	}
+	
 };
 
 int main()
@@ -72,8 +67,8 @@ int main()
 	cout<<"Monday - Friday, 7am until 5pm"<<endl;
 	cout<<"Saturday - Sunday, 8am until 3pm\n"<<endl;
 	
+	R.readFile();
 	char choice;
-	ifstream inData;
 	
 	do
 	{
@@ -123,9 +118,7 @@ int main()
             cin >> choice;
 		}
 	} while (choice == 'Y' || choice == 'y');
-	
-	inData.open("Menu.txt");
-	inData.close();
+
 	
 	return 0;
 }
