@@ -60,16 +60,52 @@ public:
         cout << "User Register" << endl;
         cout << "\nName : ";
         getline(cin, username);
+        //check if the name already exist
+        ifstream checkName("user records.txt");
+		string existingUsername;		
+		do 
+		{
+		    if (existingUsername == username) 
+			{
+		        cout << "\nUsername already exists. Please try again and choose a different name.\n";
+		       return;
+		    }
+		}while (checkName >> existingUsername >> email >> address >> contactNumber >> password >> cpassword);
+        
         cout << "\nEmail :";
-        getline(cin, email);
+        getline(cin, email);     
+       // Check if the email already exists
+		ifstream checkEmail("user records.txt");
+		string existingEmail;
+		do 
+		{
+		    if (existingEmail == email) 
+			{
+		        cout << "\nEmail already exists. Please try again and choose a different email.\n";
+		        return;  
+		    }
+		}while (checkEmail >> username >> existingEmail >> address >> contactNumber >> password >> cpassword);
+        
         cout << "\nAddress :";
         getline(cin, address);
         cout << "\nContact Number :";
         getline(cin, contactNumber);
+        
+        //ensure the pwd is match
+        do 
+		{
         cout << "\nPassword :";
         getline(cin, password);
         cout << "\nPassword Confirmation :";
         getline(cin, cpassword);
+
+	        if (password != cpassword) 
+			{
+	            cout << "\nPassword and confirmation password do not match. Please try again.\n";
+	        }
+    	} while (password != cpassword);
+    	
+    	
 
         ofstream reg("user records.txt", ios::app);
         reg << username << ' ' << email << ' ' << address << ' ' << contactNumber << ' ' << password << ' ' << cpassword << endl;
