@@ -1,8 +1,8 @@
-#include<iostream>
-#include<istream>
-#include<fstream>
-#include<stdlib.h>
-#include<string.h>
+#include <iostream>
+#include <istream>
+#include <fstream>
+#include <cstdlib>
+#include <string>
 
 using namespace std;
 
@@ -17,17 +17,18 @@ private:
     string cpassword;
 
 public:
-
+	
     void login() 
 	{
         int count = 0;
         string inputUsername, inputPassword;
+
         system("cls");
         cout << "User Login" << endl;
         cout << "USERNAME or EMAIL :";
-        cin >> inputUsername;
+        getline(cin, inputUsername);
         cout << "PASSWORD :";
-        cin >> inputPassword;
+        getline(cin, inputPassword);
 
         ifstream input("user records.txt");
         while (input >> username >> email >> address >> contactNumber >> password >> cpassword) 
@@ -43,53 +44,47 @@ public:
 
         if (count == 1) 
 		{
-            cout << "\nHello " << username << "\n<LOGIN SUCCESSFUL>\nThanks for logging in Restaurant Fusion Fare Delights\n";
-            cin.get();
-            return;
-        } else 
+            cout << "\nHello " << username << "\n<LOGIN SUCCESSFUL>\nThanks for logging in Restaurant Fusion Fare Delights\n";    
+            int main();
+        } 
+		else 
 		{
             cout << "\nLOGIN ERROR\nPlease check again your username or email and password\n";
             int main();
         }
     }
 
-    void registration() 
-	{
+    void registration() {
         system("cls");
         cout << "User Register" << endl;
         cout << "\nName : ";
-        cin >> username;
+        getline(cin, username);
         cout << "\nEmail :";
-        cin >> email;
+        getline(cin, email);
         cout << "\nAddress :";
-        cin >> address;
+        getline(cin, address);
         cout << "\nContact Number :";
-        cin >> contactNumber;
+        getline(cin, contactNumber);
         cout << "\nPassword :";
-        cin >> password;
+        getline(cin, password);
         cout << "\nPassword Confirmation :";
-        cin >> cpassword;
+        getline(cin, cpassword);
 
         ofstream reg("user records.txt", ios::app);
         reg << username << ' ' << email << ' ' << address << ' ' << contactNumber << ' ' << password << ' ' << cpassword << endl;
         system("cls");
         cout << "\nRegistration Successful\n";
-        
-        int main();
     }
 
-    void forgetPassword() 
-	{
+    void forgetPassword() {
         string input;
         cout << "Enter your username or email to recover password: ";
-        cin >> input;
+        getline(cin, input);
 
         ifstream userFile("user records.txt");
 
-        while (userFile >> username >> email >> address >> contactNumber >> password >> cpassword) 
-		{
-            if (username == input || email == input) 
-			{
+        while (userFile >> username >> email >> address >> contactNumber >> password >> cpassword) {
+            if (username == input || email == input) {
                 cout << "Your password is : " << password << endl;
                 return;
             }
@@ -98,13 +93,9 @@ public:
         cout << "User not found. Please check your username or email." << endl;
         return;
     }
-
-   
 };
 
-
-class Admin 
-{
+class Admin {
 private:
     string adminId;
     string adminPass;
@@ -112,40 +103,34 @@ private:
 public:
     Admin() : adminId("admin"), adminPass("admin123") {}
 
-    void adminlogin() 
-	{
+    void adminlogin() {
         int count = 0;
         string inputId, inputPass;
 
         system("cls");
         cout << "Administrator Login" << endl;
         cout << "Admin ID: ";
-        cin >> inputId;
+        getline(cin, inputId);
         cout << "Password: ";
-        cin >> inputPass;
+        getline(cin, inputPass);
 
-        if (inputId == adminId && inputPass == adminPass) 
-		{
+        if (inputId == adminId && inputPass == adminPass) {
             count = 1;
             system("cls");
         }
 
-        if (count == 1) 
-		{
+        if (count == 1) {
             cout << "\n<ADMIN LOGIN SUCCESSFUL>\n";
             cout << "Welcome, Admin " << endl;
             return;
-        } 
-		else 
-		{
+        } else {
             cout << "\nADMIN LOGIN ERROR\nPlease check your Admin ID and Password\n";
             return;
         }
     }
 };
 
-int main() 
-{
+int main() {
     int choice;
     User user;
     Admin admin;
@@ -163,8 +148,9 @@ int main()
         cin >> choice;
         cout << endl;
 
-        switch (choice) 
-		{
+        cin.ignore();  // Clear the input buffer
+
+        switch (choice) {
             case 1:
                 user.login();
                 break;
