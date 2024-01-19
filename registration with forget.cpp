@@ -217,7 +217,7 @@ int main()
                 break;
             default:
                 system("cls");
-                cout << "Please select again\n" << endl;
+                cout << "Invalid Choice! Please select again\n" << endl;
         }
     } while (choice != 5);
 
