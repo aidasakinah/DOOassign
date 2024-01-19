@@ -54,7 +54,8 @@ public:
         }
     }
 
-    void registration() {
+    void registration() 
+	{
         system("cls");
         cout << "User Register" << endl;
         cout << "\nName : ";
@@ -76,15 +77,18 @@ public:
         cout << "\nRegistration Successful\n";
     }
 
-    void forgetPassword() {
+    void forgetPassword() 
+	{
         string input;
         cout << "Enter your username or email to recover password: ";
         getline(cin, input);
 
         ifstream userFile("user records.txt");
 
-        while (userFile >> username >> email >> address >> contactNumber >> password >> cpassword) {
-            if (username == input || email == input) {
+        while (userFile >> username >> email >> address >> contactNumber >> password >> cpassword) 
+		{
+            if (username == input || email == input) 
+			{
                 cout << "Your password is : " << password << endl;
                 return;
             }
@@ -95,7 +99,8 @@ public:
     }
 };
 
-class Admin {
+class Admin 
+{
 private:
     string adminId;
     string adminPass;
@@ -103,7 +108,8 @@ private:
 public:
     Admin() : adminId("admin"), adminPass("admin123") {}
 
-    void adminlogin() {
+    void adminlogin() 
+	{
         int count = 0;
         string inputId, inputPass;
 
@@ -114,28 +120,34 @@ public:
         cout << "Password: ";
         getline(cin, inputPass);
 
-        if (inputId == adminId && inputPass == adminPass) {
+        if (inputId == adminId && inputPass == adminPass) 
+		{
             count = 1;
             system("cls");
         }
 
-        if (count == 1) {
+        if (count == 1) 
+		{
             cout << "\n<ADMIN LOGIN SUCCESSFUL>\n";
             cout << "Welcome, Admin " << endl;
             return;
-        } else {
+        } 
+		else 
+		{
             cout << "\nADMIN LOGIN ERROR\nPlease check your Admin ID and Password\n";
             return;
         }
     }
 };
 
-int main() {
+int main() 
+{
     int choice;
     User user;
     Admin admin;
 
-    do {
+    do 
+	{
         cout << "************************************************\n";
         cout << "\t      Welcome to login page \n";
         cout << "**************      MENU      ******************\n\n";
@@ -148,9 +160,10 @@ int main() {
         cin >> choice;
         cout << endl;
 
-        cin.ignore();  // Clear the input buffer
+        cin.ignore();  
 
-        switch (choice) {
+        switch (choice) 
+		{
             case 1:
                 user.login();
                 break;
