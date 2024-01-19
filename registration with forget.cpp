@@ -1,8 +1,8 @@
-#include<iostream>
-#include<istream>
-#include<fstream>
-#include<stdlib.h>
-#include<string.h>
+#include <iostream>
+#include <istream>
+#include <fstream>
+#include <cstdlib>
+#include <string>
 
 using namespace std;
 
@@ -17,17 +17,18 @@ private:
     string cpassword;
 
 public:
-
+	
     void login() 
 	{
         int count = 0;
         string inputUsername, inputPassword;
+
         system("cls");
         cout << "User Login" << endl;
         cout << "USERNAME or EMAIL :";
-        cin >> inputUsername;
+        getline(cin, inputUsername);
         cout << "PASSWORD :";
-        cin >> inputPassword;
+        getline(cin, inputPassword);
 
         ifstream input("user records.txt");
         while (input >> username >> email >> address >> contactNumber >> password >> cpassword) 
@@ -43,10 +44,10 @@ public:
 
         if (count == 1) 
 		{
-            cout << "\nHello " << username << "\n<LOGIN SUCCESSFUL>\nThanks for logging in Restaurant Fusion Fare Delights\n";
-            cin.get();
-            return;
-        } else 
+            cout << "\nHello " << username << "\n<LOGIN SUCCESSFUL>\nThanks for logging in Restaurant Fusion Fare Delights\n";    
+            int main();
+        } 
+		else 
 		{
             cout << "\nLOGIN ERROR\nPlease check again your username or email and password\n";
             int main();
@@ -58,31 +59,65 @@ public:
         system("cls");
         cout << "User Register" << endl;
         cout << "\nName : ";
-        cin >> username;
+        getline(cin, username);
+        //check if the name already exist
+        ifstream checkName("user records.txt");
+		string existingUsername;		
+		do 
+		{
+		    if (existingUsername == username) 
+			{
+		        cout << "\nUsername already exists. Please try again and choose a different name.\n";
+		       return;
+		    }
+		}while (checkName >> existingUsername >> email >> address >> contactNumber >> password >> cpassword);
+        
         cout << "\nEmail :";
-        cin >> email;
+        getline(cin, email);     
+       // Check if the email already exists
+		ifstream checkEmail("user records.txt");
+		string existingEmail;
+		do 
+		{
+		    if (existingEmail == email) 
+			{
+		        cout << "\nEmail already exists. Please try again and choose a different email.\n";
+		        return;  
+		    }
+		}while (checkEmail >> username >> existingEmail >> address >> contactNumber >> password >> cpassword);
+        
         cout << "\nAddress :";
-        cin >> address;
+        getline(cin, address);
         cout << "\nContact Number :";
-        cin >> contactNumber;
+        getline(cin, contactNumber);
+        
+        //ensure the pwd is match
+        do 
+		{
         cout << "\nPassword :";
-        cin >> password;
+        getline(cin, password);
         cout << "\nPassword Confirmation :";
-        cin >> cpassword;
+        getline(cin, cpassword);
+
+	        if (password != cpassword) 
+			{
+	            cout << "\nPassword and confirmation password do not match. Please try again.\n";
+	        }
+    	} while (password != cpassword);
+    	
+    	
 
         ofstream reg("user records.txt", ios::app);
         reg << username << ' ' << email << ' ' << address << ' ' << contactNumber << ' ' << password << ' ' << cpassword << endl;
         system("cls");
         cout << "\nRegistration Successful\n";
-        
-        int main();
     }
 
     void forgetPassword() 
 	{
         string input;
         cout << "Enter your username or email to recover password: ";
-        cin >> input;
+        getline(cin, input);
 
         ifstream userFile("user records.txt");
 
@@ -98,10 +133,7 @@ public:
         cout << "User not found. Please check your username or email." << endl;
         return;
     }
-
-   
 };
-
 
 class Admin 
 {
@@ -120,9 +152,9 @@ public:
         system("cls");
         cout << "Administrator Login" << endl;
         cout << "Admin ID: ";
-        cin >> inputId;
+        getline(cin, inputId);
         cout << "Password: ";
-        cin >> inputPass;
+        getline(cin, inputPass);
 
         if (inputId == adminId && inputPass == adminPass) 
 		{
@@ -150,7 +182,8 @@ int main()
     User user;
     Admin admin;
 
-    do {
+    do 
+	{
         cout << "************************************************\n";
         cout << "\t      Welcome to login page \n";
         cout << "**************      MENU      ******************\n\n";
@@ -162,6 +195,8 @@ int main()
         cout << "\nEnter your choice :";
         cin >> choice;
         cout << endl;
+
+        cin.ignore();  
 
         switch (choice) 
 		{
