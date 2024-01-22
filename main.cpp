@@ -1,66 +1,173 @@
 #include <iostream>
-#include <istream>
+#include <iomanip>
 #include <fstream>
 #include <cstdlib>
 #include <string>
 
 using namespace std;
+const int MAX_ITEM = 100;
 
- class Restaurant
+class Cart
 {
-	private:
-	float Nasilemak, Currymee, Friedrice, Meesoup, Asamlaksa, Prawnmee, Teh_hot, Teh_cold, Coffee_hot, Coffee_cold, Milo_hot, Milo_cold, Lemontea_hot, Lemontea_cold;
-	float price;
-	ifstream menuFile;
-	
-	public:
-	void readFile()
-	{
-		ifstream menuFile("Menu.txt");
-        if (!menuFile)
-        {
-        	cout<<"File does not exist";
-			exit(1);
-		}
+private:
+    static const int MAX_CART_ITEMS = 100;
+    string cartItems[MAX_CART_ITEMS]; // Maintain an array of items
+    float cartPrices[MAX_CART_ITEMS]; // Maintain an array of item prices
+    int itemCount;                    // Track the number of items in the cart
+    char payoption;
+    // for panyment
+    string cardHolderName;
+    string cardNumber;
+    string expirationDate;
+    string cvv;
 
-    	menuFile.close();
-	}
-	void displayMenu(int nasi, int curry, int fried, int mee, int asam, int prawn, int teh_h, int teh_c, int coffee_h, int coffee_c, int milo_h, int milo_c, int lemon_h, int lemon_c)
-	{
-		Nasilemak = static_cast<float>(nasi);
-		Currymee = static_cast<float>(curry);
- 		Friedrice = static_cast<float>(fried);
- 		Meesoup = static_cast<float>(mee);
- 		Asamlaksa = static_cast<float>(asam);
- 		Prawnmee = static_cast<float>(prawn);
- 		Teh_hot = static_cast<float>(teh_h);
-		Teh_cold = static_cast<float>(teh_c);
-		Coffee_hot = static_cast<float>(coffee_h);
-		Coffee_cold = static_cast<float>(coffee_c);
-		Milo_hot = static_cast<float>(milo_h);
-		Milo_cold = static_cast<float>(milo_c);
-		Lemontea_hot = static_cast<float>(lemon_h);
-		Lemontea_cold = static_cast<float>(lemon_c);
-		
-		getOrder();
-	}
-	
-	void getOrder()
-	{
-		cout<<"Total bowls :"<< Nasilemak + Currymee + Friedrice + Meesoup + Asamlaksa + Prawnmee<<endl;
-		cout<<"Total cups :"<< Teh_hot + Teh_cold + Coffee_hot + Coffee_cold + Milo_hot + Milo_cold + Lemontea_hot + Lemontea_cold<<endl;
-	}
-		
-	void getPrice()
-	{
-		price = Nasilemak * 8.50 + Currymee * 7.00 + Friedrice * 7.00 + Meesoup * 6.00 + Asamlaksa * 8.00 + Prawnmee * 6.50 + Teh_hot * 2.00 + Teh_cold * 2.50 + Coffee_hot * 2.30 + Coffee_cold * 2.80 + Milo_hot * 3.00 + Milo_cold * 3.50 + Lemontea_hot * 3.00 + Lemontea_cold * 3.50;
-		cout<<"Thank you. Your order price is RM"<<price<<endl;
-	}
-	
+public:
+    Cart() : itemCount(0) {}
+    void setItemDetails(string itemName, float itemPrice)
+    {
+        if (itemCount < MAX_CART_ITEMS)
+        {
+            cartItems[itemCount] = itemName;
+            cartPrices[itemCount] = itemPrice;
+            itemCount++;
+        }
+        else
+        {
+            cout << "Cart is full. Cannot add more items." << endl;
+        }
+    }
+
+    void displayCart()
+    {
+
+        float total = 0.0;
+        for (int i = 0; i < itemCount; ++i)
+        {
+            cout << cartItems[i] << " RM" << cartPrices[i] << endl;
+            total += cartPrices[i];
+        }
+        cout << "Total Price: RM" << total << endl;
+        cout << "Do you want to proceed to your payment? [Y/N]:";
+        cin >> payoption;
+        if (payoption == 'Y' || payoption == 'y')
+        {
+
+            fflush(stdin);
+            cout << "\n===================Enter payment details===================" << endl;
+            cout << "Cardholder Name: ";
+            getline(cin, cardHolderName);
+            cout << "Card Number: ";
+            getline(cin, cardNumber);
+            cout << "Expiration Date: ";
+            getline(cin, expirationDate);
+            cout << "CVV: ";
+            getline(cin, cvv);
+
+            // Process payment (you can implement your payment logic here)
+            cout << "\nProcessing payment..." << endl;
+            cout << "Payment successful. Thank you for your purchase!" << endl;
+        }
+        else if (payoption == 'N' || payoption == 'n')
+        {
+            system("cls");
+            return;
+        }
+    }
+
+    // Accessor methods
+    int getItemCount() const
+    {
+        return itemCount;
+    }
+
+    string getCartItem(int index) const
+    {
+        return cartItems[index];
+    }
+
+    float getCartPrice(int index) const
+    {
+        return cartPrices[index];
+    }
 };
 
+class Restaurant
+{
+private:
+    float price, itemPrice;
+    string itemName;
+    Cart C;
 
-class User 
+public:
+    void readFile(Cart &cart)
+    {
+        string menuFileName = "Menu.txt";
+        ifstream menuFile(menuFileName.c_str());
+        if (!menuFile)
+        {
+            cout << "File does not exist";
+            exit(1);
+        }
+
+        cout << "Food and Beverange" << endl;
+
+        string a[MAX_ITEM];
+        float b[MAX_ITEM];
+        int itemNumber = 0;
+
+        while (menuFile >> a[itemNumber] >> b[itemNumber])
+        {
+            itemNumber++;
+        }
+
+        for (int i = 0; i < itemNumber; i++)
+        {
+            cout << i + 1 << ") " << setw(30) << left << a[i] << " RM" << fixed << setprecision(2) << b[i] << endl;
+        }
+
+        int choice;
+        price = 0;
+
+        while (true)
+        {
+
+            cout << "\nSelect a food item by entering its number: ";
+            cin >> choice;
+            if (choice >= 1 && choice <= itemNumber)
+            {
+                cout << "You selected: " << choice << ") " << a[choice - 1] << " RM" << b[choice - 1] << endl;
+                cart.setItemDetails(a[choice - 1], b[choice - 1]);
+                price += b[choice - 1];
+                cout << "Current order total: RM" << price << endl;
+
+                char foodchoice;
+                cout << "Would you like to make another order? [Y/N]\n";
+                cin >> foodchoice;
+                C.setItemDetails(a[choice - 1], b[choice - 1]);
+                if (!(foodchoice == 'Y' || foodchoice == 'y'))
+                {
+                    cout << "Your current order price is RM" << price << endl;
+
+                    C.displayCart();
+                    break;
+                }
+            }
+            else
+            {
+                cout << "Invalid choice\n";
+            }
+        } // end of while loop
+        menuFile.close();
+    } // end of function
+
+    void setItemDetails(string itemName, float itemPrice)
+    {
+        this->itemName = itemName;
+        this->itemPrice = itemPrice;
+    }
+};
+
+class User
 {
 private:
     string username;
@@ -71,9 +178,8 @@ private:
     string cpassword;
 
 public:
-	
-    void login() 
-	{
+    void login()
+    {
         int count = 0;
         string inputUsername, inputPassword;
 
@@ -85,10 +191,10 @@ public:
         getline(cin, inputPassword);
 
         ifstream input("user records.txt");
-        while (input >> username >> email >> address >> contactNumber >> password >> cpassword) 
-		{
-            if ((username == inputUsername || email == inputUsername) && password == inputPassword) 
-			{
+        while (input >> username >> email >> address >> contactNumber >> password >> cpassword)
+        {
+            if ((username == inputUsername || email == inputUsername) && password == inputPassword)
+            {
                 count = 1;
                 system("cls");
                 break;
@@ -96,70 +202,69 @@ public:
         }
         input.close();
 
-        if (count == 1) 
-		{
-            cout << "\nHello " << username << "\n<LOGIN SUCCESSFUL>\nThanks for logging in Restaurant Fusion Fare Delights\n";    
-            int main();
-        } 
-		else 
-		{
+        if (count == 1)
+        {
+            setUsername(username);
+            setAddress(address);
+            cout << "\nHello " << username << "\n<LOGIN SUCCESSFUL>\nThanks for logging in Restaurant Fusion Fare Delights\n";
+        }
+        else
+        {
             cout << "\nLOGIN ERROR\nPlease check again your username or email and password\n";
-            int main();
         }
     }
 
-    void registration() 
-	{
+    void registration()
+    {
         system("cls");
         cout << "User Register" << endl;
         cout << "\nName : ";
         getline(cin, username);
-        //check if the name already exist
+        // check if the name already exist
         ifstream checkName("user records.txt");
-		string existingUsername;		
-		do 
-		{
-		    if (existingUsername == username) 
-			{
-		        cout << "\nUsername already exists. Please try again and choose a different name.\n";
-		       return;
-		    }
-		}while (checkName >> existingUsername >> email >> address >> contactNumber >> password >> cpassword);
-        
+        string existingUsername;
+        do
+        {
+            if (existingUsername == username)
+            {
+                cout << "\nUsername already exists. Please try again and choose a different name.\n";
+                return;
+            }
+        } while (checkName >> existingUsername >> email >> address >> contactNumber >> password >> cpassword);
+
         cout << "\nEmail :";
-        getline(cin, email);     
-       // Check if the email already exists
-		ifstream checkEmail("user records.txt");
-		string existingEmail;
-		do 
-		{
-		    if (existingEmail == email) 
-			{
-		        cout << "\nEmail already exists. Please try again and choose a different email.\n";
-		        return;  
-		    }
-		}while (checkEmail >> username >> existingEmail >> address >> contactNumber >> password >> cpassword);
-        
+        getline(cin, email);
+        // Check if the email already exists
+        ifstream checkEmail("user records.txt");
+        string existingEmail;
+        do
+        {
+            if (existingEmail == email)
+            {
+                cout << "\nEmail already exists. Please try again and choose a different email.\n";
+                return;
+            }
+        } while (checkEmail >> username >> existingEmail >> address >> contactNumber >> password >> cpassword);
+
+        setAddress(address);
         cout << "\nAddress :";
         getline(cin, address);
         cout << "\nContact Number :";
         getline(cin, contactNumber);
-        
-        //ensure the pwd is match
-        do 
-		{
-        cout << "\nPassword :";
-        getline(cin, password);
-        cout << "\nPassword Confirmation :";
-        getline(cin, cpassword);
 
-	        if (password != cpassword) 
-			{
-	            cout << "\nPassword and confirmation password do not match. Please try again.\n";
-	        }
-    	} while (password != cpassword);
-    	
-    	
+        // ensure the pwd is match
+        do
+        {
+            cout << "\nPassword :";
+            getline(cin, password);
+            cout << "\nPassword Confirmation :";
+            getline(cin, cpassword);
+
+            if (password != cpassword)
+            {
+                cout << "\nPassword and confirmation password do not match. Please try again.\n";
+            }
+        } while (password != cpassword);
 
         ofstream reg("user records.txt", ios::app);
         reg << username << ' ' << email << ' ' << address << ' ' << contactNumber << ' ' << password << ' ' << cpassword << endl;
@@ -167,18 +272,18 @@ public:
         cout << "\nRegistration Successful\n";
     }
 
-    void forgetPassword() 
-	{
+    void forgetPassword()
+    {
         string input;
         cout << "Enter your username or email to recover password: ";
         getline(cin, input);
 
         ifstream userFile("user records.txt");
 
-        while (userFile >> username >> email >> address >> contactNumber >> password >> cpassword) 
-		{
-            if (username == input || email == input) 
-			{
+        while (userFile >> username >> email >> address >> contactNumber >> password >> cpassword)
+        {
+            if (username == input || email == input)
+            {
                 cout << "Your password is : " << password << endl;
                 return;
             }
@@ -187,9 +292,51 @@ public:
         cout << "User not found. Please check your username or email." << endl;
         return;
     }
+    void setUsername(const string &name)
+    {
+        username = name;
+    }
+
+    string getUsername() const
+    {
+        return username;
+    }
+
+    void setAddress(const string &addr)
+    {
+        address = addr;
+    }
+
+    string getAddress() const
+    {
+        return address;
+    }
 };
 
-class Admin 
+class Receipt
+{
+public:
+    Receipt() {}
+
+    void generateReceipt(const User &user, const Cart &cart)
+    {
+        system("cls");
+        cout << "========== RECEIPT ==========" << endl;
+        cout << "Name: " << user.getUsername() << endl;
+        cout << "Address: " << user.getAddress() << endl;
+
+        float total = 0.0;
+        cout << "Selected Items:" << endl;
+        for (int i = 0; i < cart.getItemCount(); ++i)
+        {
+            cout << cart.getCartItem(i) << " RM" << cart.getCartPrice(i) << endl;
+            total += cart.getCartPrice(i);
+        }
+        cout << "Total Price: RM" << total << endl;
+    }
+};
+
+class Admin
 {
 private:
     string adminId;
@@ -198,8 +345,8 @@ private:
 public:
     Admin() : adminId("admin"), adminPass("admin123") {}
 
-    void adminlogin() 
-	{
+    void adminlogin()
+    {
         int count = 0;
         string inputId, inputPass;
 
@@ -210,132 +357,117 @@ public:
         cout << "Password: ";
         getline(cin, inputPass);
 
-        if (inputId == adminId && inputPass == adminPass) 
-		{
-            count = 1;
-            system("cls");
-        }
+        // if (inputId == adminId && inputPass == adminPass)
+        // {
+        //     count = 1;
+        //     //system("cls");
+        // }
 
-        if (count == 1) 
-		{
+        // if (count == 1)
+        // {
+        //     cout << "\n<ADMIN LOGIN SUCCESSFUL>\n";
+        //     cout << "Welcome, Admin " << endl;
+        // }
+        // else
+        // {
+        //     cout << "\nADMIN LOGIN ERROR\nPlease check your Admin ID and Password\n";
+        //     return;
+        // }
+
+        if (inputId == adminId && inputPass == adminPass)
+        {
             cout << "\n<ADMIN LOGIN SUCCESSFUL>\n";
             cout << "Welcome, Admin " << endl;
-            return;
-        } 
-		else 
-		{
-            cout << "\nADMIN LOGIN ERROR\nPlease check your Admin ID and Password\n";
-            return;
+        }
+        else
+        {
+            // cout << "Incorrect login details. Please try again.\n";
+
+            do
+            {
+                system("cls");
+                cout << "Incorrect login details. Please try again.\n"; // if the user enter wrong password, it will loop again
+                cout << "Administrator Login" << endl;
+                cout << "Admin ID: ";
+                getline(cin, inputId);
+                cout << "Password: ";
+                getline(cin, inputPass);
+
+            } while (inputId != adminId || inputPass != adminPass);
         }
     }
 };
 
-int main() 
+int main()
 {
     int choice;
+    string selectedItem;
+    float selectedPrice;
     User user;
     Admin admin;
+    Receipt Rp;
+    string username;
+    string address;
 
-    do 
-	{
-        cout << "************************************************\n";
-        cout << "\t      Welcome to login page \n";
-        cout << "**************      MENU      ******************\n\n";
+    //    Adminpage ap;
+    Restaurant R;
+    Cart C;
+
+    do
+    {
+        cout << "\n";
+        cout << "---------------------------------------------------------" << endl;
+        cout << "\tWelcome to Restaurant Fusion Fare Delight!" << endl;
+        cout << "---------------------------------------------------------" << endl;
         cout << "1. USER LOGIN" << endl;
         cout << "2. USER REGISTER" << endl;
         cout << "3. FORGET PASSWORD" << endl;
-        cout << "4. ADMINISTRATOR LOGIN" << endl;
-        cout << "5. EXIT" << endl;
+        cout << "4. Menu" << endl;
+        cout << "5. My Cart" << endl;
+        cout << "6. ADMINISTRATOR LOGIN" << endl;
+        cout << "7. EXIT" << endl;
         cout << "\nEnter your choice :";
         cin >> choice;
         cout << endl;
 
-        cin.ignore();  
+        cin.ignore();
 
-        switch (choice) 
-		{
-            case 1:
-                user.login();
-                break;
-            case 2:
-                user.registration();
-                break;
-            case 3:
-                user.forgetPassword();
-                break;
-            case 4:
-                admin.adminlogin();
-                break;
-            case 5:
-                cout << "Thank you for visiting Restaurant Fusion Fare Delights." << endl;
-                break;
-            default:
-                system("cls");
-                cout << "Please select again\n" << endl;
+        switch (choice)
+        {
+        case 1:
+            user.login();
+            break;
+        case 2:
+            user.registration();
+            break;
+        case 3:
+            user.forgetPassword();
+            break;
+        case 4:
+            system("cls");
+            R.readFile(C);
+            break;
+        case 5:
+            system("cls");
+            cout << "================Items in your cart================" << endl;
+            C.displayCart();
+            username = user.getUsername();
+            address = user.getAddress();
+            Rp.generateReceipt(user, C);
+            break;
+        case 6:
+            admin.adminlogin();
+            //                ap.manageMenu();
+            break;
+        case 7:
+            cout << "Thank you for visiting Restaurant Fusion Fare Delights." << endl;
+            break;
+        default:
+            system("cls");
+            cout << "Please select again\n"
+                 << endl;
         }
-    } while (choice != 5);
-  
-  Restaurant R;
-	//welcome page
-	cout<<"---------------------------------------------------------"<<endl;
-	cout<<"\tWelcome to Restaurant Fusion Fare Delight!"<<endl;
-	cout<<"---------------------------------------------------------"<<endl;
-	cout<<"OPENING HOURS"<<endl;
-	cout<<"Monday - Friday, 7am until 5pm"<<endl;
-	cout<<"Saturday - Sunday, 8am until 3pm\n"<<endl;
-	
-	R.readFile();
-	char choice;
-	
-	do
-	{
-		cout<<"---------------------------------------------------"<<endl;
-		cout<<"\tRestaurant Fusion Fare Delight"<<endl;
-		cout<<"---------------------------------------------------"<<endl;
-		cout<<"Looking for a food/drinks? [Y/N]\n";
-		cin>>choice;
-		
-		if (choice == 'Y' || choice == 'y')
-		{
-			int nasi, curry, fried, mee, asam, prawn, teh_h, teh_c, coffee_h, coffee_c, milo_h, milo_c, lemon_h, lemon_c;
-			cout<<"Food/Beverages"<<endl;
-			cout<<"1) Nasi Lemak with Fried Chicken (bowl) : ";
-			cin>>nasi;
-			cout<<"2) Curry Mee (bowl) : ";
-			cin>>curry;
-			cout<<"3) Fried Rice (bowl) : ";
-			cin>>fried;
-			cout<<"4) Mee Soup (bowl) : ";
-			cin>>mee;
-			cout<<"5) Asam Laksa (bowl) : ";
-			cin>>asam;
-			cout<<"6) Prawn Mee (bowl) : ";
-			cin>>prawn;
-			cout<<"7) Teh (hot) (cup) : ";
-			cin>>teh_h;
-			cout<<"8) Teh (cold) (cup) : ";
-			cin>>teh_c;
-			cout<<"9) Coffee (hot) (cup) : ";
-			cin>>coffee_h;
-			cout<<"10) Coffee (cold) (cup) : ";
-			cin>>coffee_c;
-			cout<<"11) Milo (hot) (cup) : ";
-			cin>>milo_h;
-			cout<<"12) Milo (cold) (cup) : ";
-			cin>>milo_c;
-			cout<<"13) Lemon Tea (hot) (cup) : ";
-			cin>>lemon_h;
-			cout<<"14) Lemon Tea (cold) (cup) : ";
-			cin>>lemon_c;
-			
-			R.displayMenu(nasi, curry, fried, mee, asam, prawn, teh_h, teh_c, coffee_h, coffee_c, milo_h, milo_c, lemon_h, lemon_c);
-			R.getPrice();
-			
-			cout << "Would you like to make another order? [Y/N]\n";
-            cin >> choice;
-		}
-	} while (choice == 'Y' || choice == 'y');
-
+    } while (choice != 7);
 
     return 0;
 }
