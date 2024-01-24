@@ -4,7 +4,9 @@
 #include <cstdlib>
 #include <string>
 #include <algorithm>
-
+//2 additional libraries
+#include <conio.h> // for getch() function for password
+#include <vector> // for vector (found in manageMenu() function)
 using namespace std;
 const int MAX_ITEM=100;
 
@@ -451,6 +453,137 @@ public:
         }
     }
 };
+
+// class Adminpage
+// this class is for admin to manage the menu :D
+class Adminpage : public Admin
+{
+private:
+    int choice;
+
+protected:
+public:
+    void displayAdmin()
+    {
+        cout << "\n\n >>>>>>>>>> Welcome to Admin Page <<<<<<<<<<" << endl;
+        cout << "1. Manage Menu" << endl;
+        cout << "2. Manage User" << endl;
+        cout << "3. Manage Order" << endl;
+        cout << "4. Exit" << endl;
+        cout << "\nEnter your choice : ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            manageMenu();
+            break;
+        case 2:
+            // manageUser();
+            break;
+        case 3:
+            // manageOrder();
+            break;
+        case 4:
+            cout << "Exiting, Returning to Main Menu" << endl;
+            break;
+        }
+    } // end of displayAdmin
+
+    void manageMenu()
+    {
+
+        string itemName;
+        float itemPrice;
+        int pick;
+
+        cout << "Enter [1] to add item to menu OR [2] to remove item from menu OR [3] to search for item from menu : ";
+        cin >> pick;
+
+        if (pick == 1)
+        {
+            // add items to menu
+            cin.ignore(); // Clear the newline character from the buffer
+            cout << "Enter the name of the new item : ";
+            getline(cin, itemName);
+
+            cout << "Enter the price of the new item : RM ";
+            cin >> itemPrice;
+
+            ofstream menuFile("Menu.txt", ios::app); // Open the file in append mode
+            if (menuFile.is_open())
+            {
+                menuFile << itemName << " " << fixed << setprecision(2) << itemPrice << endl; // adds item into a new line
+                cout << "Item added successfully.\n";
+                menuFile.close();
+            }
+            else
+            {
+                cout << "Error opening Menu.txt for writing.\n";
+            } // end of if else for add to Menu.txt
+        }// end of if pick == 1
+        else if (pick == 2)
+        {
+            cout << "Enter the name of the item to delete: ";
+            cin.ignore(); // Clear the newline character from the buffer
+            getline(cin, itemName);
+
+            ifstream inFile("Menu.txt");
+            ofstream outFile("temp.txt");
+
+            string line;
+            bool found = false;
+
+            while (getline(inFile, line))
+            {
+                if (line.find(itemName) != string::npos)
+                {
+                    // Skip the line to delete the item
+                    found = true;
+                    continue;
+                }
+                outFile << line << endl;
+            }
+
+            inFile.close();
+            outFile.close();
+
+            if (found)
+            {
+                remove("Menu.txt");
+                rename("temp.txt", "Menu.txt");
+                cout << "Item deleted successfully.\n";
+            }
+            else
+            {
+                cout << "Item not found in the menu.\n";
+                remove("temp.txt");
+            }//end of if else if found
+        }//end of else if pick == 2
+        else if (pick == 3)
+        {
+            //this code is incomplete 
+            ifstream menuFile("Menu.txt"); //this is to open the file
+            string line; //this is to store each line of text
+            vector<int> items; //vector to store search string found
+            int lineNumber = 1; //line number counter
+
+            while (getline(menuFile, line)) //this is to read the file line by line
+            {
+                if (line.find(itemName) != string::npos) //if search string is found
+                {
+                    items.push_back(lineNumber); //store the line number in the vector
+                }
+                lineNumber++; //increment line number
+            }
+        
+        }//end of else if pick == 3
+        else
+        {
+            cout << "Invalid choice. Please try again.\n";
+        }//end of else
+    }// end of manageMenu
+}; // end of class Adminpage
 
 int main() 
 {
