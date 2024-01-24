@@ -171,11 +171,14 @@ private:
     string contactNumber;
     string password;
     string cpassword;
+    
+    bool loggedIn;
 
 public:
 	
-    void login() 
-	{
+	 User() : loggedIn(false) {} 
+	
+    void login() {
         int count = 0;
         string inputUsername, inputPassword;
 
@@ -187,10 +190,8 @@ public:
         getline(cin, inputPassword);
 
         ifstream input("user records.txt");
-        while (input >> username >> email >> address >> contactNumber >> password >> cpassword) 
-		{
-            if ((username == inputUsername || email == inputUsername) && password == inputPassword) 
-			{
+        while (input >> username >> email >> address >> contactNumber >> password >> cpassword) {
+            if ((username == inputUsername || email == inputUsername) && password == inputPassword) {
                 count = 1;
                 system("cls");
                 break;
@@ -198,16 +199,18 @@ public:
         }
         input.close();
 
-        if (count == 1) 
-		{
-			setUsername(username);
-			setAddress(address);
-            cout << "\nHello " << username << "\n<LOGIN SUCCESSFUL>\nThanks for logging in Restaurant Fusion Fare Delights\n";    
-        } 
-		else 
-		{
+        if (count == 1) {
+            setUsername(username);
+            setAddress(address);
+            loggedIn = true; // Set loggedIn to true upon successful login
+            cout << "\nHello " << username << "\n<LOGIN SUCCESSFUL>\nThanks for logging in Restaurant Fusion Fare Delights\n";
+        } else {
             cout << "\nLOGIN ERROR\nPlease check again your username or email and password\n";
         }
+    }
+    
+     bool isLoggedIn() const {
+        return loggedIn;
     }
 
     void registration() 
@@ -423,7 +426,6 @@ public:
         float itemPrice;
         int pick;
 
-        system("cls"); // clearing the screen
         cout << "Enter [1] to add item to menu OR [2] to remove item from menu OR [3] to search for item from menu : ";
         cin >> pick;
 
@@ -512,27 +514,56 @@ public:
     }// end of manageMenu
 }; // end of class Adminpage
 
-int main() 
+void showMenuOptions(User& user, Admin& admin, Adminpage& ap, Restaurant& R, Cart& C, bool& userAuthenticated)
 {
     int choice;
-    string selectedItem;
-    float selectedPrice;
-    User user;
-    Admin admin;
-    Adminpage ap;
-    Restaurant R;
-    Cart C;
 
-    bool userAuthenticated = false;
+    do
+    {
+        cout << "1. Menu" << endl;
+        cout << "2. My Cart" << endl;
+        cout << "3. Logout" << endl;
+        cout << "4. EXIT" << endl;
+        cout << "\nEnter your choice :";
+        cin >> choice;
+        cout << endl;
 
-    do 
+        cin.ignore();
+
+        switch (choice)
+        {
+            case 1:
+                R.readFile(C);
+                break;
+            case 2:
+                C.displayCart();
+                break;
+            case 3:
+                // Logout Logic
+                userAuthenticated = false;
+                break;
+            case 4:
+                cout << "Thank you for visiting Restaurant Fusion Fare Delights." << endl;
+                break;
+            default:
+                system("cls");
+                cout << "Please select again\n" << endl;
+        }
+    } while (choice != 4 && choice != 5);
+}
+
+void welcomePage(User& user, Admin& admin, Adminpage& ap, Restaurant& R, Cart& C, bool& userAuthenticated)
+{
+    int choice;
+
+    do
     {
         cout << "\n";
         cout << "---------------------------------------------------------" << endl;
         cout << "\tWelcome to Restaurant Fusion Fare Delight!" << endl;
         cout << "---------------------------------------------------------" << endl;
 
-        if (!userAuthenticated) 
+        if (!userAuthenticated)
         {
             cout << "1. USER LOGIN" << endl;
             cout << "2. USER REGISTER" << endl;
@@ -545,12 +576,12 @@ int main()
 
             cin.ignore();
 
-            switch (choice) 
+            switch (choice)
             {
                 case 1:
-                	system("cls");
+                    system("cls");
                     user.login();
-                    userAuthenticated = true;
+                    userAuthenticated = user.isLoggedIn(); // Check if the user has logged in successfully
                     break;
                 case 2:
                     user.registration();
@@ -569,41 +600,30 @@ int main()
                 default:
                     cout << "Please select again\n" << endl;
             }
-        } 
-        else 
+        }
+        else
         {
-            cout << "1. Menu" << endl;
-            cout << "2. My Cart" << endl;
-            cout << "3. Logout" << endl;
-            cout << "4. EXIT" << endl;
-            cout << "\nEnter your choice :";
-            cin >> choice;
-            cout << endl;
-
-            cin.ignore();
-
-            switch (choice) 
-            {
-                case 1:
-                    R.readFile(C);
-                    break;
-                case 2:
-                    C.displayCart();
-                    break;
-                case 3:
-                    // Logout Logic
-                    userAuthenticated = false;
-                    break;
-                case 4:
-                    cout << "Thank you for visiting Restaurant Fusion Fare Delights." << endl;
-                    break;
-                default:
-                    system("cls");
-                    cout << "Please select again\n" << endl;
-            }
+            showMenuOptions(user, admin, ap, R, C, userAuthenticated);
         }
 
     } while (choice != 4 && choice != 5);
+}
+
+
+int main()
+{
+    int choice;
+    string selectedItem;
+    float selectedPrice;
+    User user;
+    Admin admin;
+    Adminpage ap;
+    Restaurant R;
+    Cart C;
+
+    bool userAuthenticated = false;
+
+    welcomePage(user, admin, ap, R, C, userAuthenticated);
 
     return 0;
 }
