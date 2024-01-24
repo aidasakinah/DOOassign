@@ -1,10 +1,75 @@
 #include <iostream>
+#include <iomanip>
 #include <istream>
 #include <fstream>
 #include <cstdlib>
-#include <string>
+#include <string.h>
+
 
 using namespace std;
+const int MAX_ITEM=100;
+
+class Restaurant
+{
+	private:
+		float price;
+	
+	public:
+		void readFile()
+		{
+			ifstream menuFile("Menu.txt");
+	        if (!menuFile)
+	        {
+	        	cout<<"File does not exist";
+				exit(1);
+			}
+		
+			cout<<"Food and Beverange"<<endl;
+			
+			string a[MAX_ITEM];
+			float b[MAX_ITEM];
+			int itemNumber =0;
+			
+			while(menuFile >> a[itemNumber] >> b[itemNumber]){
+				itemNumber++;
+			}
+				
+			for(int i=0;i<itemNumber;i++){
+				cout << i+1 << ") " <<setw(30)<<left<< a[i]<< " RM" <<fixed<<setprecision(2)<< b[i] << endl;
+			}
+		
+			int choice;
+			price=0;
+			
+			while(true){
+			
+	        cout << "\nSelect a food item by entering its number: ";
+	        cin >> choice;
+		        if (choice >= 1 && choice <= itemNumber){
+			        cout << "You selected: " << choice << ") " << a[choice-1] << " RM" << b[choice-1] << endl;
+			        price += b[choice-1];
+			        cout << "Current order total: RM" << price << endl;
+			
+			        char foodchoice;
+			        cout << "Would you like to make another order? [Y/N]\n";
+			        cin >> foodchoice;
+	
+			        if (!(foodchoice == 'Y' || foodchoice == 'y')){
+			            cout << "Thank you. Your order price is RM" << price << endl;
+			            break;
+			            
+			        }
+			        
+	    		}
+	    		else{
+	    			cout<<"Invalid choice\n";
+				}
+			}//end of while loop
+   			menuFile.close();
+		}//end of function
+    			
+};
+	
 
 class User 
 {
@@ -45,12 +110,10 @@ public:
         if (count == 1) 
 		{
             cout << "\nHello " << username << "\n<LOGIN SUCCESSFUL>\nThanks for logging in Restaurant Fusion Fare Delights\n";    
-            int main();
         } 
 		else 
 		{
             cout << "\nLOGIN ERROR\nPlease check again your username or email and password\n";
-            int main();
         }
     }
 
@@ -166,7 +229,6 @@ public:
 		{
             cout << "\n<ADMIN LOGIN SUCCESSFUL>\n";
             cout << "Welcome, Admin " << endl;
-            return;
         } 
 		else 
 		{
@@ -181,17 +243,20 @@ int main()
     int choice;
     User user;
     Admin admin;
-
+	Restaurant R;
+	
     do 
 	{
-        cout << "************************************************\n";
-        cout << "\t      Welcome to login page \n";
-        cout << "**************      MENU      ******************\n\n";
+        cout << "\n";
+      	cout<<"---------------------------------------------------------"<<endl;
+		cout<<"\tWelcome to Restaurant Fusion Fare Delight!"<<endl;
+		cout<<"---------------------------------------------------------"<<endl;
         cout << "1. USER LOGIN" << endl;
         cout << "2. USER REGISTER" << endl;
         cout << "3. FORGET PASSWORD" << endl;
-        cout << "4. ADMINISTRATOR LOGIN" << endl;
-        cout << "5. EXIT" << endl;
+        cout << "4. Menu"<<endl;
+        cout << "5. ADMINISTRATOR LOGIN" << endl;
+        cout << "6. EXIT" << endl;
         cout << "\nEnter your choice :";
         cin >> choice;
         cout << endl;
@@ -210,16 +275,22 @@ int main()
                 user.forgetPassword();
                 break;
             case 4:
+				R.readFile();
+				break;
+            case 5:
                 admin.adminlogin();
                 break;
-            case 5:
+            case 6:
                 cout << "Thank you for visiting Restaurant Fusion Fare Delights." << endl;
                 break;
             default:
                 system("cls");
                 cout << "Please select again\n" << endl;
         }
-    } while (choice != 5);
+    } while (choice != 6);
+  
+	
+
 
     return 0;
 }
