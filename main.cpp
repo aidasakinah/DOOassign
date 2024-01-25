@@ -4,11 +4,9 @@
 #include <cstdlib>
 #include <string>
 #include <algorithm>
-
 //2 additional libraries
 #include <conio.h> // for getch() function for password
 #include <vector> // for vector (found in manageMenu() function)
-
 using namespace std;
 const int MAX_ITEM=100;
 
@@ -256,14 +254,11 @@ private:
     string contactNumber;
     string password;
     string cpassword;
-    
-    bool loggedIn;
 
 public:
 	
-	 User() : loggedIn(false) {} 
-	
-    void login() {
+    void login() 
+	{
         int count = 0;
         string inputUsername, inputPassword;
 
@@ -275,8 +270,10 @@ public:
         getline(cin, inputPassword);
 
         ifstream input("user records.txt");
-        while (input >> username >> email >> address >> contactNumber >> password >> cpassword) {
-            if ((username == inputUsername || email == inputUsername) && password == inputPassword) {
+        while (input >> username >> email >> address >> contactNumber >> password >> cpassword) 
+		{
+            if ((username == inputUsername || email == inputUsername) && password == inputPassword) 
+			{
                 count = 1;
                 system("cls");
                 break;
@@ -284,18 +281,16 @@ public:
         }
         input.close();
 
-        if (count == 1) {
-            setUsername(username);
-            setAddress(address);
-            loggedIn = true; // Set loggedIn to true upon successful login
-            cout << "\nHello " << username << "\n<LOGIN SUCCESSFUL>\nThanks for logging in Restaurant Fusion Fare Delights\n";
-        } else {
+        if (count == 1) 
+		{
+			setUsername(username);
+			setAddress(address);
+            cout << "\nHello " << username << "\n<LOGIN SUCCESSFUL>\nThanks for logging in Restaurant Fusion Fare Delights\n";    
+        } 
+		else 
+		{
             cout << "\nLOGIN ERROR\nPlease check again your username or email and password\n";
         }
-    }
-    
-     bool isLoggedIn() const {
-        return loggedIn;
     }
 
     void registration() 
@@ -590,112 +585,35 @@ public:
     }// end of manageMenu
 }; // end of class Adminpage
 
-void showMenuOptions(User& user, Admin& admin, Adminpage& ap, Restaurant& R, Cart& C, bool& userAuthenticated)
+int main() 
 {
     int choice;
-
-    do
-    {
-        cout << "1. Menu" << endl;
-        cout << "2. My Cart" << endl;
-        cout << "3. Logout" << endl;
-        cout << "4. EXIT" << endl;
-        cout << "\nEnter your choice :";
-        cin >> choice;
-        cout << endl;
-
-        cin.ignore();
-
-        switch (choice)
-        {
-            case 1:
-                R.readFile(C);
-                break;
-            case 2:
-                C.displayCart();
-                break;
-            case 3:
-                // Logout Logic
-                userAuthenticated = false;
-                break;
-            case 4:
-                cout << "Thank you for visiting Restaurant Fusion Fare Delights." << endl;
-                break;
-            default:
-                system("cls");
-                cout << "Please select again\n" << endl;
-        }
-    } while (choice != 4 && choice != 5);
-}
-
-void welcomePage(User& user, Admin& admin, Adminpage& ap, Restaurant& R, Cart& C, bool& userAuthenticated)
-{
-    int choice;
-
-    do
-    {
-=======
     string selectedItem;
-	  float selectedPrice;
+	float selectedPrice;
     User user;
     Admin admin;
     Receipt Rp;
     string username;
     string address;
-	  Restaurant R;
-	  Cart C;
+	Restaurant R;
+	Cart C;
 	
     do 
 	{
-
         cout << "\n";
       	cout<<"---------------------------------------------------------"<<endl;
-		    cout<<"\tWelcome to Restaurant Fusion Fare Delight!"<<endl;
-		    cout<<"---------------------------------------------------------"<<endl;
- 
-
-
-        if (!userAuthenticated)
-        {
-            cout << "1. USER LOGIN" << endl;
-            cout << "2. USER REGISTER" << endl;
-            cout << "3. FORGET PASSWORD" << endl;
-            cout << "4. ADMINISTRATOR LOGIN" << endl;
-            cout << "5. EXIT" << endl;
-            cout << "\nEnter your choice :";
-            cin >> choice;
-            cout << endl;
-
-            cin.ignore();
-
-            switch (choice)
-            {
-                case 1:
-                    system("cls");
-                    user.login();
-                    userAuthenticated = user.isLoggedIn(); // Check if the user has logged in successfully
-                    break;
-                case 2:
-                    user.registration();
-                    userAuthenticated = true;
-                    break;
-                case 3:
-                    user.forgetPassword();
-                    break;
-                case 4:
-                    admin.adminlogin();
-                    ap.displayAdmin();
-                    break;
-                case 5:
-                    cout << "Thank you for visiting Restaurant Fusion Fare Delights." << endl;
-                    break;
-                default:
-                    cout << "Please select again\n" << endl;
-            }
-        }
-        else
-        {
-            showMenuOptions(user, admin, ap, R, C, userAuthenticated);
+		cout<<"\tWelcome to Restaurant Fusion Fare Delight!"<<endl;
+		cout<<"---------------------------------------------------------"<<endl;
+        cout << "1. USER LOGIN" << endl;
+        cout << "2. USER REGISTER" << endl;
+        cout << "3. FORGET PASSWORD" << endl;
+        cout << "4. Menu"<<endl;
+        cout << "5. My Cart"<<endl;
+        cout << "6. ADMINISTRATOR LOGIN" << endl;
+        cout << "7. EXIT" << endl;
+        cout << "\nEnter your choice :";
+        cin >> choice;
+        cout << endl;
 
         cin.ignore();
 
@@ -737,29 +655,11 @@ void welcomePage(User& user, Admin& admin, Adminpage& ap, Restaurant& R, Cart& C
             default:
                 system("cls");
                 cout << "Please select again\n" << endl;
-
         }
     } while (choice != 7);
   
-    } while (choice != 4 && choice != 5);
-}
+	
 
-
-int main()
-{
-    int choice;
-    string selectedItem;
-    float selectedPrice;
-    User user;
-    Admin admin;
-    Adminpage ap;
-    Restaurant R;
-    Cart C;
-
-    bool userAuthenticated = false;
-
-    welcomePage(user, admin, ap, R, C, userAuthenticated);
-=======
 
     return 0;
 }
