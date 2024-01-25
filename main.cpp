@@ -490,7 +490,7 @@ public:
 };
 
                                                    
-class Admin 
+class Admin
 {
 private:
     string adminId;
@@ -498,36 +498,46 @@ private:
 
 public:
     Admin() : adminId("admin"), adminPass("admin123") {}
+    friend class welcomePage;
 
-    void adminlogin() 
-	{
+    void adminlogin()
+    {
         int count = 0;
         string inputId, inputPass;
 
         system("cls");
-        cout << "Administrator Login" << endl;
+        cout << "---------------------------------------------------------" << endl;
+        cout << "\t>>>>>>>>>> Administrator Login <<<<<<<<<<" << endl;
+        cout << "---------------------------------------------------------" << endl;
         cout << "Admin ID: ";
         getline(cin, inputId);
         cout << "Password: ";
         getline(cin, inputPass);
 
-        if (inputId == adminId && inputPass == adminPass) 
-		{
-            count = 1;
-            system("cls");
-        }
-
-        if (count == 1) 
-		{
-            cout << "\n<ADMIN LOGIN SUCCESSFUL>\n";
+        if (inputId == adminId && inputPass == adminPass)
+        {
+            system("cls"); // clearing the screen
+            cout << "<ADMIN LOGIN SUCCESSFUL>\n";
             cout << "Welcome, Admin " << endl;
-        } 
-		else 
-		{
-            cout << "\nADMIN LOGIN ERROR\nPlease check your Admin ID and Password\n";
-            return;
         }
-    }
+        else
+        {
+            do
+            {
+                system("cls");
+                cout << "Incorrect login details. Please try again." << endl; // if the user enter wrong password, it will loop again
+                cout << "\n---------------------------------------------------------" << endl;
+                cout << "\t>>>>>>>>>> Administrator Login <<<<<<<<<<" << endl;
+                cout << "---------------------------------------------------------" << endl;
+                cout << "\nAdmin ID: ";
+                getline(cin, inputId);
+                cout << "Password: ";
+                getline(cin, inputPass);
+
+            } while (inputId != adminId || inputPass != adminPass); // end of do-while loop
+        }//end of if else  
+
+    }//end of void adminlogin
 };
 
 // class Adminpage
