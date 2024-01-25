@@ -3,6 +3,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <string>
+#include <algorithm>
 
 //2 additional libraries
 #include <conio.h> // for getch() function for password
@@ -11,19 +12,42 @@
 using namespace std;
 const int MAX_ITEM=100;
 
+class PaymentMethod {
+protected:
+    string cardHolderName;
+    string cardNumber;
+    string expirationDate;
+    string cvv;
 
-class Cart{
+public:
+    // Function to validate the card number
+    bool isValidCardNumber(const string& cardNumber) {
+        // Check if the card number has 16 digits
+        return cardNumber.length() == 16 && all_of(cardNumber.begin(), cardNumber.end(), ::isdigit);
+    }
+
+    // Function to validate the expiration date
+    bool isValidExpirationDate(const string& expirationDate) {
+        // Check if the expiration date has 5 characters and follows the MM/YY format
+        return expirationDate.length() == 5 && isdigit(expirationDate[0]) && isdigit(expirationDate[1]) &&
+            expirationDate[2] == '/' && isdigit(expirationDate[3]) && isdigit(expirationDate[4]);
+    }
+
+    // Function to validate the CVV
+    bool isValidCVV(const string& cvv) {
+        // Check if the CVV has 3 digits
+        return cvv.length() == 3 && all_of(cvv.begin(), cvv.end(), ::isdigit);
+    }
+};
+
+class Cart: public PaymentMethod{
 	private:
 	    static const int MAX_CART_ITEMS = 100;
     	string cartItems[MAX_CART_ITEMS]; // Maintain an array of items
     	float cartPrices[MAX_CART_ITEMS]; // Maintain an array of item prices
     	int itemCount; // Track the number of items in the cart
 	    char payoption;
-	    //for panyment
-	    string cardHolderName;
-        string cardNumber;
-        string expirationDate;
-        string cvv;
+	    
         
 	public:
 		Cart() : itemCount(0) {}
@@ -38,6 +62,7 @@ class Cart{
         }
     	}
 
+
 	    void displayCart() {
 	        
 	        float total = 0.0;
@@ -48,18 +73,33 @@ class Cart{
 	        cout << "Total Price: RM" << total << endl;
 	        cout<<"Do you want to proceed to your payment? [Y/N]:";
 	        cin>>payoption;
+	        
 	        if(payoption=='Y'||payoption=='y'){
 			
 				fflush(stdin);
 		        cout << "\n===================Enter payment details===================" << endl;
 		        cout << "Cardholder Name: ";
 		        getline(cin, cardHolderName);
-		        cout << "Card Number: ";
-		        getline(cin, cardNumber);
-		        cout << "Expiration Date: ";
-		        getline(cin, expirationDate);
-		        cout << "CVV: ";
-		        getline(cin, cvv);
+		        fflush(stdin);
+		        do {
+			        cout << "Card Number (16 digits): ";
+			        getline(cin, cardNumber);
+			        fflush(stdin);
+			    } while (!isValidCardNumber(cardNumber));
+
+			    // Read and validate Expiration Date
+			    do {
+			        cout << "Expiration Date (MM/YY): ";
+			        getline(cin, expirationDate);
+			        fflush(stdin);
+			    } while (!isValidExpirationDate(expirationDate));
+
+			    // Read and validate CVV
+			    do {
+			        cout << "CVV (3 digits): ";
+			        getline(cin, cvv);
+			        fflush(stdin);
+			    } while (!isValidCVV(cvv));
 		
 		        // Process payment (you can implement your payment logic here)
 		        cout << "\nProcessing payment..." << endl;
@@ -85,7 +125,20 @@ class Cart{
 	        return cartPrices[index];
 	    }
 		
-	
+		void updateSalesCount() {
+        ofstream salesReport("sales_report.txt", ios::app);
+        if (!salesReport) {
+            cout << "Error opening sales report file." << endl;
+            return;
+        }
+
+        salesReport << "================ Sales Report ================" << endl;
+        for (int i = 0; i < itemCount; ++i) {
+            salesReport << cartItems[i] << ": " << cartPrices[i] << " RM" << endl;
+        }
+
+        salesReport.close();
+    }
 };
 
 class Restaurant
@@ -134,14 +187,15 @@ class Restaurant
                     cout << "Current order total: RM" << price << endl;
 				
 			        char foodchoice;
-			        cout << "Would you like to make another order? [Y/N]\n";
+			        cout << "Would you like to make another order? [Y/N] : ";
 			        cin >> foodchoice;
 					C.setItemDetails(a[choice - 1], b[choice - 1]);
 			        if (!(foodchoice == 'Y' || foodchoice == 'y')){
 			            cout << "Your current order price is RM" << price << endl;
-			            
-			            C.displayCart();
-			            break;
+			            cout<<"Please go to my cart for payment. Press any button to exit.";
+			            system("pause");
+			            system("cls");
+			            return;
 			            
 			        }
 			        
@@ -158,7 +212,38 @@ class Restaurant
             this->itemName = itemName;
             this->itemPrice = itemPrice;
         }
-    			
+    		
+			
+		void updateSalesCount(const Cart& cart) {
+        ifstream menuFile("Menu.txt");
+        if (!menuFile) {
+            cout << "Error opening menu file." << endl;
+            return;
+        }
+
+        ofstream salesCountFile("sales_count.txt", ios::out | ios::trunc);
+        if (!salesCountFile) {
+            cout << "Error opening sales count file." << endl;
+            return;
+        }
+
+        string itemName;
+        float itemPrice;
+        int salesCount;
+
+        while (menuFile >> itemName >> itemPrice) {
+            salesCount = 0;
+            for (int i = 0; i < cart.getItemCount(); ++i) {
+                if (itemName == cart.getCartItem(i)) {
+                    salesCount++;
+                }
+            }
+            salesCountFile << itemName << " " << salesCount << endl;
+        }
+
+        menuFile.close();
+        salesCountFile.close();
+    }	
 };
 	
 
@@ -219,36 +304,31 @@ public:
         cout << "User Register" << endl;
         cout << "\nName : ";
         getline(cin, username);
-        // Check if the name already exists
-    ifstream checkName("user records.txt");
-    string existingUsername;
-
-    while (checkName >> existingUsername >> email >> address >> contactNumber >> password >> cpassword) 
-	{
-        if (existingUsername == username) 
+        //check if the name already exist
+        ifstream checkName("user records.txt");
+		string existingUsername;		
+		do 
 		{
-            cout << "\nUsername already exists. Please try again and choose a different name.\n";
-            return;
-        }
-    }
-    checkName.close();  // Close the file before reopening
-
-    cout << "\nEmail :";
-    getline(cin, email);
-
-    // Check if the email already exists
-    ifstream checkEmail("user records.txt");
-    string existingEmail;
-
-    while (checkEmail >> existingUsername >> existingEmail >> address >> contactNumber >> password >> cpassword) 
-	{
-        if (existingEmail == email) 
+		    if (existingUsername == username) 
+			{
+		        cout << "\nUsername already exists. Please try again and choose a different name.\n";
+		       return;
+		    }
+		}while (checkName >> existingUsername >> email >> address >> contactNumber >> password >> cpassword);
+        
+        cout << "\nEmail :";
+        getline(cin, email);     
+       // Check if the email already exists
+		ifstream checkEmail("user records.txt");
+		string existingEmail;
+		do 
 		{
-            cout << "\nEmail already exists. Please try again and choose a different email.\n";
-            return;
-        }
-    }
-    checkEmail.close(); 
+		    if (existingEmail == email) 
+			{
+		        cout << "\nEmail already exists. Please try again and choose a different email.\n";
+		        return;  
+		    }
+		}while (checkEmail >> username >> existingEmail >> address >> contactNumber >> password >> cpassword);
         
         setAddress(address);
         cout << "\nAddress :";
@@ -314,7 +394,8 @@ public:
     string getAddress() const {
         return address;
     }
-    
+    // Make Cart a friend of User to access User's private members
+    friend class Cart;
 };
 
 
@@ -341,47 +422,42 @@ public:
 class Admin 
 {
 private:
-protected:
     string adminId;
     string adminPass;
 
 public:
     Admin() : adminId("admin"), adminPass("admin123") {}
 
-    void adminlogin()
-    {
+    void adminlogin() 
+	{
         int count = 0;
         string inputId, inputPass;
 
         system("cls");
-        cout << " >>>>>>>>>> Administrator Login <<<<<<<<<<" << endl;
+        cout << "Administrator Login" << endl;
         cout << "Admin ID: ";
         getline(cin, inputId);
         cout << "Password: ";
         getline(cin, inputPass);
 
-        if (inputId == adminId && inputPass == adminPass)
-        {
-            system("cls"); // clearing the screen
-            cout << "<ADMIN LOGIN SUCCESSFUL>\n";
-            cout << "Welcome, Admin " << endl;
+        if (inputId == adminId && inputPass == adminPass) 
+		{
+            count = 1;
+            system("cls");
         }
-        else
-        {
-            do
-            {
-                system("cls");
-                cout << "Incorrect login details. Please try again." << endl; // if the user enter wrong password, it will loop again
-                cout << "Administrator Login" << endl;
-                cout << "\n\nAdmin ID: ";
-                getline(cin, inputId);
-                cout << "Password: ";
-                getline(cin, inputPass);
 
-            } while (inputId != adminId || inputPass != adminPass); // end of do-while loop
-        }// end of if-else
-    }// end of adminlogin
-}; //end of class Admin
+        if (count == 1) 
+		{
+            cout << "\n<ADMIN LOGIN SUCCESSFUL>\n";
+            cout << "Welcome, Admin " << endl;
+        } 
+		else 
+		{
+            cout << "\nADMIN LOGIN ERROR\nPlease check your Admin ID and Password\n";
+            return;
+        }
+    }
+};
 
 // class Adminpage
 // this class is for admin to manage the menu :D
@@ -558,10 +634,26 @@ void welcomePage(User& user, Admin& admin, Adminpage& ap, Restaurant& R, Cart& C
 
     do
     {
+=======
+    string selectedItem;
+	  float selectedPrice;
+    User user;
+    Admin admin;
+    Receipt Rp;
+    string username;
+    string address;
+	  Restaurant R;
+	  Cart C;
+	
+    do 
+	{
+
         cout << "\n";
-        cout << "---------------------------------------------------------" << endl;
-        cout << "\tWelcome to Restaurant Fusion Fare Delight!" << endl;
-        cout << "---------------------------------------------------------" << endl;
+      	cout<<"---------------------------------------------------------"<<endl;
+		    cout<<"\tWelcome to Restaurant Fusion Fare Delight!"<<endl;
+		    cout<<"---------------------------------------------------------"<<endl;
+ 
+
 
         if (!userAuthenticated)
         {
@@ -604,8 +696,51 @@ void welcomePage(User& user, Admin& admin, Adminpage& ap, Restaurant& R, Cart& C
         else
         {
             showMenuOptions(user, admin, ap, R, C, userAuthenticated);
-        }
 
+        cin.ignore();
+
+
+
+        switch (choice) 
+		{
+            case 1:
+                user.login();
+                break;
+            case 2:
+                user.registration();
+                break;
+            case 3:
+                user.forgetPassword();
+                break;
+            case 4:
+            	system("cls");
+				R.readFile(C);
+				break;
+			case 5:
+				system("cls");
+				cout << "================Items in your cart================" << endl;
+				C.displayCart();
+				username = user.getUsername();
+				address = user.getAddress();
+				Rp.generateReceipt(user, C);
+				// Update sales count and generate sales report for admin
+                R.updateSalesCount(C);
+                C.updateSalesCount();
+				break;
+            case 6:
+                admin.adminlogin();
+				R.updateSalesCount(C);
+                break;
+            case 7:
+                cout << "Thank you for visiting Restaurant Fusion Fare Delights." << endl;
+                break;
+            default:
+                system("cls");
+                cout << "Please select again\n" << endl;
+
+        }
+    } while (choice != 7);
+  
     } while (choice != 4 && choice != 5);
 }
 
@@ -624,6 +759,7 @@ int main()
     bool userAuthenticated = false;
 
     welcomePage(user, admin, ap, R, C, userAuthenticated);
+=======
 
     return 0;
 }
